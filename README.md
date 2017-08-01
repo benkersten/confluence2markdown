@@ -14,7 +14,7 @@ This project is a 0.x version NOT working yet, but under development
 
 Sample:
 ```
-./c2m.py /path/to/extracted/confluence/html/ /tmp/markdown
+python c2m.py /path/to/extracted/confluence/html/ /tmp/my-markdown
 ```
 
 # Python version
