@@ -17,6 +17,10 @@ class ConfluenceHtmlToMarkdownConverter(HTMLParser):
     def handle_data(self, data):
         print "Encountered some data  :", data
 
+def convert_html_to_markdown(html_content):
+    parser = ConfluenceHtmlToMarkdownConverter()
+    parser.feed(html_content)
+    return "not implemented yet"
 
 # setup program arguments:
 parser = argparse.ArgumentParser()
@@ -32,10 +36,16 @@ print "to"
 print args.dest
 print "------------------------------"
 
+# copy whole source tree to destination, i.e. the .html files.
+# This makes it easier to handle path+folder and new .md files.
+# Plus, if conversion fails for some files, one can inspect remaining html files.
+shutil.copytree(args.source, args.dest)
+
 # iterate all files. Read in html, write out md
-for root, dirs, files in os.walk(args.source):
+for root, dirs, files in os.walk(args.dest):
     for file in files:
         filename, extension = os.path.splitext(file)
+        # print file, filename, extension
         # skip non-html files:
         if not extension == '.html':
             continue
@@ -45,6 +55,17 @@ for root, dirs, files in os.walk(args.source):
         with open(html_file_path, 'r') as fin:
             html_content = fin.read()
 
-        parser = ConfluenceHtmlToMarkdownConverter()
-        parser.feed(html_content)
+        # convert html to markdown
+        markdown_content = convert_html_to_markdown(html_content)
+
+        # write markdown to .md file
+        markdown_filename = "%s.md" % filename
+        markdown_file_path = os.path.join(root, markdown_filename)
+        with open(markdown_file_path, 'w') as fout:
+            fout.write(markdown_content)
+
+        # remove copied .html file
+        os.remove(html_file_path)
+
+
 
