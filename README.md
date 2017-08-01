@@ -13,9 +13,10 @@ This project is a 0.x version NOT working yet, but under development
 - Run ./c2m.py [sourcefolder] [destinationfolder]
 
 Sample:
+```
+./c2m.py /path/to/extracted/confluence/html/ /tmp/markdown
+```
 
-    ./c2m.py /path/to/extracted/confluence/html/ /tmp/markdown
-    
 # Python version
 Python 2.7.x is used by intention to be able to run on most platforms (e.g. MacOS still has no python3 by default when this project was started in 2017). Fork the project and use [2to3](https://docs.python.org/2/library/2to3.html) to use python3.
 
