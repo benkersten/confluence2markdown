@@ -13,6 +13,7 @@ This project is a 0.x version NOT working yet, but under development
 - Run ./c2m.py [sourcefolder] [destinationfolder]
 
 Sample:
+
     ./c2m.py /path/to/extracted/confluence/html/ /tmp/markdown
     
 # Python version
