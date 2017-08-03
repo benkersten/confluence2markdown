@@ -5,7 +5,9 @@ Python 3.x tool converting Confluence html to Markdown. Primarily, it uses Githu
 You need 
 1. python3
 2. bs4 - [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+
 Python3 should be available on most Linux distros. If on Mac, install via brew or download.
+
 bs4 is a HtmlParser. Can be installed via package manager on several Linux distros (e.g. `apt-get install python3-bs4`). Otherwise install via pip (e.g. `pip3 install beautifulsoup4`)
 
 # WARN
