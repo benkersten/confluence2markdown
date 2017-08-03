@@ -3,24 +3,27 @@
 import argparse
 import shutil
 import os
-from HTMLParser import HTMLParser
+# formerly used python's HTML parser, changed to bs4:
+# from HTMLParser import HTMLParser
+from bs4 import BeautifulSoup
 
-# confluencehtml2markdown-converter extending pyhton's HTMLParser
-# TODO convert. For now, just prints html tags
-class ConfluenceHtmlToMarkdownConverter(HTMLParser):
-    def handle_starttag(self, tag, attrs):
-        print "Encountered a start tag:", tag
-
-    def handle_endtag(self, tag):
-        print "Encountered an end tag :", tag
-
-    def handle_data(self, data):
-        print "Encountered some data  :", data
-
+# the actual conf-html-to-markdown logic:
 def convert_html_to_markdown(html_content):
-    parser = ConfluenceHtmlToMarkdownConverter()
-    parser.feed(html_content)
-    return "not implemented yet"
+    # let bs4 parse the html:
+    soup = BeautifulSoup(html_content, "html.parser")
+    # the markdown string returned as result:
+    md = ""
+    
+    # html-page title: Confluence uses "spacename : pagename". Remove the spacename here
+    title = soup.title.string 
+    print(title)
+    position_colon = title.find(" : ")
+    if position_colon >= 0 :
+        title = title[(position_colon+3):]
+    print(title)
+    md += "# " + title
+    print(md) 
+    return md
 
 # setup program arguments:
 parser = argparse.ArgumentParser()
@@ -29,12 +32,12 @@ parser.add_argument("dest", help="destination folder, i.e. path to folder where 
 args = parser.parse_args()
 
 # print info
-print "------------------------------"
-print "Converting Confluence (.html to .md) from"
-print args.source
-print "to"
-print args.dest
-print "------------------------------"
+print( "------------------------------" )
+print( "Converting Confluence (.html to .md) from" )
+print( args.source )
+print( "to" )
+print( args.dest )
+print( "------------------------------" )
 
 # copy whole source tree to destination, i.e. the .html files.
 # This makes it easier to handle path+folder and new .md files.
