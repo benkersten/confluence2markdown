@@ -7,8 +7,58 @@ import os
 # from HTMLParser import HTMLParser
 from bs4 import BeautifulSoup
 
+# defs
+md_br = "\n"
+md_dbr = "\n\n"
+html_br = "<br/>"
+html_dbr = "<br/><br/>"
+
+def convert_html_tag(tag):
+    if tag is None:
+        return ""
+    if tag.name == "div":
+        return convert_div(tag)
+    if tag.name == "p":
+        return convert_p(tag)
+    if tag.name == "table":
+        return convert_table(tag)
+    if tag.name == "img":
+        return convert_img(tag)
+    if tag.name == "a":
+        return convert_a(tag)
+    if tag.name == "ul":
+        return convert_ul(tag)
+    return ""
+
+def convert_div(tag):
+    md = ""
+    md += tag.text
+    for child in tag.children:
+        md += convert_html_tag(child)
+    return md
+
+def convert_p(tag):
+    md = ""
+    md += tag.text
+    for child in tag.children:
+        md += convert_html_tag(child)
+    return md
+
+def convert_table(tag):
+    return ""
+
+def convert_img(tag):
+    return ""
+    
+def convert_a(tag):
+    return ""
+
+def convert_ul(tag):
+    return ""
+    
+
 # the actual conf-html-to-markdown logic:
-def convert_html_to_markdown(html_content):
+def convert_html_page(html_content):
     # let bs4 parse the html:
     soup = BeautifulSoup(html_content, "html.parser")
     # the markdown string returned as result:
@@ -16,13 +66,19 @@ def convert_html_to_markdown(html_content):
     
     # html-page title: Confluence uses "spacename : pagename". Remove the spacename here
     title = soup.title.string 
-    print(title)
     position_colon = title.find(" : ")
     if position_colon >= 0 :
         title = title[(position_colon+3):]
-    print(title)
-    md += "# " + title
-    print(md) 
+    md += "# " + title + md_dbr
+    
+    # goto <body><div id="main-content"> and ignore all that other Confluence-added-garbage
+    div_main = soup.find("div", {"id": "main-content"})
+    if div_main is None :
+        return md
+    # traverse all children of div_main and try to convert to markdown
+    for child in div_main.children:
+        md += convert_html_tag(child)
+
     return md
 
 # setup program arguments:
@@ -59,7 +115,7 @@ for root, dirs, files in os.walk(args.dest):
             html_content = fin.read()
 
         # convert html to markdown
-        markdown_content = convert_html_to_markdown(html_content)
+        markdown_content = convert_html_page(html_content)
 
         # write markdown to .md file
         markdown_filename = "%s.md" % filename
