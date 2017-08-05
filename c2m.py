@@ -6,6 +6,7 @@ import os
 # formerly used python's HTML parser, changed to bs4:
 # from HTMLParser import HTMLParser
 from bs4 import BeautifulSoup
+from bs4 import NavigableString
 
 # defs
 md_br = "\n"
@@ -16,6 +17,20 @@ html_dbr = "<br/><br/>"
 def convert_html_tag(tag):
     if tag is None:
         return ""
+
+    # info about this tag:
+    tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__)
+    if tag.name is not None:
+        tag_info += (", name="+tag.name)
+    print(tag_info) 
+    
+    # check type:
+    # if isinstance( type(tag), type(NavigableString) ): # would return true for <p> too, checks subtypes
+    if tag.__class__.__name__ == "NavigableString" :
+        print("string==true")
+    if tag.__class__ == NavigableString :
+        print("string==true")
+
     if tag.name == "div":
         return convert_div(tag)
     if tag.name == "p":
@@ -32,15 +47,29 @@ def convert_html_tag(tag):
 
 def convert_div(tag):
     md = ""
-    md += tag.text
+    if tag.string is not None:
+        md += tag.string
+        print("convert_div:"+tag.string)
+    else:
+        print("convert_div:-")
     for child in tag.children:
         md += convert_html_tag(child)
     return md
 
 def convert_p(tag):
     md = ""
-    md += tag.text
+    if tag.string is not None:
+        md += tag.string
+        print("convert_p:"+tag.string)
+    else:
+        print("convert_p:-")
+    if tag.text is not None:
+        md += tag.text
+        print("convert_p:"+tag.text)
+    else:
+        print("convert_p:-")
     for child in tag.children:
+        print("convert_p:child:"+(str(type(child))))
         md += convert_html_tag(child)
     return md
 
