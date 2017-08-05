@@ -9,31 +9,37 @@ from bs4 import BeautifulSoup
 from bs4 import NavigableString
 from bs4 import Tag
 
-# defs
+# flags
+rendering_html = False
+
+# linebreaks
 md_br = "\n"
 md_dbr = "\n\n"
 html_br = "<br/>"
 html_dbr = "<br/><br/>"
+def linebreak():
+    if rendering_html:
+        return html_br
+    else:
+        return md_br
 
-# flags
-rendering_html = False
 
 def convert_html_tag(tag):
     if tag is None:
         return ""
 
     # info about this tag:
-    tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__ + ", tag="+str(tag))
+    tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__)
     if tag.name is not None:
         tag_info += (", name="+tag.name)
-    print(tag_info) 
+    # print(tag_info) 
     
     # check type:
     # if isinstance( type(tag), type(NavigableString) ): # would return true for <p> too, checks subtypes
-    if tag.__class__.__name__ == "NavigableString" :
-        print("string==true")
-    if tag.__class__ == NavigableString :
-        print("string==true")
+    #if tag.__class__.__name__ == "NavigableString" :
+    #    print("string==true")
+    #if tag.__class__ == NavigableString :
+    #    print("string==true")
 
     if tag.name == "div":
         return convert_div(tag)
@@ -53,9 +59,7 @@ def convert_div(tag):
     md = ""
     if tag.string is not None:
         md += tag.string
-        print("convert_div:"+tag.string)
-    else:
-        print("convert_div:-")
+        # print("convert_div:"+tag.string)
     for child in tag.children:
         md += convert_html_tag(child)
     return md
@@ -65,27 +69,44 @@ def convert_p(tag):
     # How to add text in <p>text</p>?
     # - tag.text does not work: returns text of ALL children
     # - tag.string does not work: fails if there are other tags, e.g. as in <p>text<br/>more text</p>
-    # So, instead traverse children and check for string or tag:
+    # So, instead traverse children and check for string or tag.
     for child in tag.children:
         # print("convert_p:child:"+(str(type(child))))
         if child.__class__ == NavigableString:
             md += child.string
-            print("NavigableString: "+child.string)
+            # print("NavigableString: "+child.string)
         elif child.__class__ == Tag:
-            if tag.name == "br":
-                print("tag-br")
-                if rendering_html:
-                    md += html_br
-                else:
-                    md += md_br
+            if child.name == "br":
+                # print("tag-br")
+                md += linebreak()
             else:
                 md += str(tag)
         else:
             md += str(tag)
+    
+    # linebreak at end of tag
+    md += linebreak()
+    md += linebreak()
+    
     return md
 
 def convert_table(tag):
-    return ""
+    # in markdown, tables can be represented with pipes:
+    # Col1 | Col2 ...
+    # or by just rendering html. As complex tables (e.g. with multi-line-code) does not work
+    # with pipe-rendering, just keep the html-table as-is:
+
+    # set rendering_html, so that other tag-processing works fine. E.g. <br/> will be kept as
+    # <br/> instead of being converted to \n
+    rendering_html = True
+    md = str(tag)
+    rendering_html = False
+
+    # linebreak at end of tag
+    md += linebreak()
+    md += linebreak()
+    
+    return md
 
 def convert_img(tag):
     return ""
