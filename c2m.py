@@ -7,6 +7,7 @@ import os
 # from HTMLParser import HTMLParser
 from bs4 import BeautifulSoup
 from bs4 import NavigableString
+from bs4 import Tag
 
 # defs
 md_br = "\n"
@@ -14,12 +15,15 @@ md_dbr = "\n\n"
 html_br = "<br/>"
 html_dbr = "<br/><br/>"
 
+# flags
+rendering_html = False
+
 def convert_html_tag(tag):
     if tag is None:
         return ""
 
     # info about this tag:
-    tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__)
+    tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__ + ", tag="+str(tag))
     if tag.name is not None:
         tag_info += (", name="+tag.name)
     print(tag_info) 
@@ -58,19 +62,26 @@ def convert_div(tag):
 
 def convert_p(tag):
     md = ""
-    if tag.string is not None:
-        md += tag.string
-        print("convert_p:"+tag.string)
-    else:
-        print("convert_p:-")
-    if tag.text is not None:
-        md += tag.text
-        print("convert_p:"+tag.text)
-    else:
-        print("convert_p:-")
+    # How to add text in <p>text</p>?
+    # - tag.text does not work: returns text of ALL children
+    # - tag.string does not work: fails if there are other tags, e.g. as in <p>text<br/>more text</p>
+    # So, instead traverse children and check for string or tag:
     for child in tag.children:
-        print("convert_p:child:"+(str(type(child))))
-        md += convert_html_tag(child)
+        # print("convert_p:child:"+(str(type(child))))
+        if child.__class__ == NavigableString:
+            md += child.string
+            print("NavigableString: "+child.string)
+        elif child.__class__ == Tag:
+            if tag.name == "br":
+                print("tag-br")
+                if rendering_html:
+                    md += html_br
+                else:
+                    md += md_br
+            else:
+                md += str(tag)
+        else:
+            md += str(tag)
     return md
 
 def convert_table(tag):
