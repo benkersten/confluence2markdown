@@ -86,7 +86,6 @@ def convert_p(tag):
     
     # linebreak at end of tag
     md += linebreak()
-    md += linebreak()
     
     return md
 
