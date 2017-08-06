@@ -23,7 +23,7 @@ def linebreak():
     else:
         return md_br
 
-
+# convert the passed html-tag. Delegates to convert-* functions depending on tag
 def convert_html_tag(tag):
     if tag is None:
         return ""
@@ -57,11 +57,11 @@ def convert_html_tag(tag):
 
 def convert_div(tag):
     md = ""
-    if tag.string is not None:
-        md += tag.string
-        # print("convert_div:"+tag.string)
     for child in tag.children:
-        md += convert_html_tag(child)
+        if child.__class__ == NavigableString:
+            md += child.string
+        else:
+            md += convert_html_tag(child)
     return md
 
 def convert_p(tag):
@@ -98,6 +98,7 @@ def convert_table(tag):
     # set rendering_html, so that other tag-processing works fine. E.g. <br/> will be kept as
     # <br/> instead of being converted to \n
     rendering_html = True
+    md += linebreak()
     # just keep the <html>-table as-is:
     md = str(tag)
     # remove confluence-CSS
@@ -121,9 +122,8 @@ def convert_a(tag):
 
 def convert_ul(tag):
     return ""
-    
 
-# the actual conf-html-to-markdown logic:
+# convert the whole page / html_content. Taverses children and delegates logic per tag.
 def convert_html_page(html_content):
     # let bs4 parse the html:
     soup = BeautifulSoup(html_content, "html.parser")
