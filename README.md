@@ -1,5 +1,5 @@
 # confluence2markdown
-Python 3.x tool converting Confluence html to Markdown. Primarily, it uses Github flavored Markdown, but also adds some stuff that is used on stackoverflow. Focusses on code-blocks, tables, lists, images. Might miss some other advanced html tags.
+Python 3.x tool converting Confluence html to Markdown. Primarily, it uses Github flavored Markdown, but also adds some stuff that is used on stackoverflow. Focusses on code-blocks, tables, lists, images. Might miss some other advanced html tags. See details below. Designed for Confluence 5.8.2.
 
 # Requirements
 You need 
@@ -23,5 +23,13 @@ Sample:
 python3 c2m.py /path/to/extracted/confluence/html/ /tmp/my-markdown
 ```
 
+# Markdown
+
+`Code blocks` are rendered Gibhub-flavored, using three backticks. stackoverflow uses 4-space-indention instead, but code on SO can be easily indented (CTRL-K). SO also uses optional HTML-comments to specify language. Github allows to specify language appended to backticks. \
+\```python\
+some code\
+\```
+
+Tables are rendered as-is, i.e. html is kept. Even though tables are often written with pipes in markup, pipe-tables have limitations. E.g. there is no way (i am aware of) to render multi-line-code within tables (in a single cell).
 
 
