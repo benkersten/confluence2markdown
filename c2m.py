@@ -98,7 +98,13 @@ def convert_table(tag):
     # set rendering_html, so that other tag-processing works fine. E.g. <br/> will be kept as
     # <br/> instead of being converted to \n
     rendering_html = True
+    # just keep the <html>-table as-is:
     md = str(tag)
+    # remove confluence-CSS
+    md = md.replace(' class="confluenceTd"', '')
+    md = md.replace(' class="confluenceTr"', '')
+    md = md.replace(' class="confluenceTh"', '')
+    md = md.replace(' class="confluenceTable"', '')
     rendering_html = False
 
     # linebreak at end of tag
