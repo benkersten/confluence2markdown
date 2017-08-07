@@ -11,6 +11,7 @@ from bs4 import Tag
 
 # flags
 rendering_html = False
+indent = -1
 
 # linebreaks
 md_br = "\n"
@@ -97,7 +98,9 @@ def convert_table(tag):
 
     # set rendering_html, so that other tag-processing works fine. E.g. <br/> will be kept as
     # <br/> instead of being converted to \n
+    global rendering_html
     rendering_html = True
+    md = ""
     md += linebreak()
     # just keep the <html>-table as-is:
     md = str(tag)
@@ -121,7 +124,41 @@ def convert_a(tag):
     return ""
 
 def convert_ul(tag):
-    return ""
+    md = ""
+    # insert linebreaks around <ul>, but NOT for nested <ul>. Therefore, linebreak
+    # only if indent-level is -1:
+    global indent
+    #if indent == -1:
+        #md += linebreak()
+    md += linebreak()
+    # increase indention for each list level
+    indent += 1
+    print("indent " + str(indent))
+    for child in tag.children:
+        if child.__class__ == Tag:
+            if child.name == "li":
+                md += convert_li(child)
+    # reset indention
+    indent -= 1
+    if indent == -1:
+        md += linebreak()
+    return md
+
+def convert_li(tag):
+    # each <li> is prefixed with a dash
+    md = ""
+    global indent
+    for i in range(0,indent*2):
+        md += " "
+    md += "- "
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            # a string, just append it
+            md += child.string
+        elif child.__class__ == Tag:
+            md += convert_html_tag(child)
+    md += linebreak()
+    return md
 
 # convert the whole page / html_content. Taverses children and delegates logic per tag.
 def convert_html_page(html_content):
