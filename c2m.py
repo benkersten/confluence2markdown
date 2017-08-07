@@ -12,6 +12,7 @@ from bs4 import Tag
 # flags
 rendering_html = False
 indent = -1
+li_break = False
 
 # linebreaks
 md_br = "\n"
@@ -148,6 +149,17 @@ def convert_li(tag):
     # each <li> is prefixed with a dash
     md = ""
     global indent
+    global li_break
+    # reset li_break, see end of function
+    li_break = False
+    
+    # check if current <li> exist for purpose of single <ul> only, as in "<li><ul><li>content</li></ul></li>
+    li_for_ul_only = True
+    if len(tag.contents, 1) and tag.contents[0].__class__ == Tag and tag.contents[0].name == "ul":
+        li_for_ul_only = True
+
+    
+    # indent markup depending on level
     for i in range(0,indent*2):
         md += " "
     md += "- "
@@ -157,7 +169,12 @@ def convert_li(tag):
             md += child.string
         elif child.__class__ == Tag:
             md += convert_html_tag(child)
-    md += linebreak()
+    
+    # Linebreak after <li>. Skip if last chars were li-break too, as in </li></ul></li>.
+    if not li_break:
+        md += linebreak()
+        li_break = True
+
     return md
 
 # convert the whole page / html_content. Taverses children and delegates logic per tag.
