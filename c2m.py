@@ -56,6 +56,8 @@ def convert_html_tag(tag):
         return convert_a(tag)
     if tag.name == "ul":
         return convert_ul(tag)
+    if tag.name == "pre":
+        return convert_pre(tag)
     return ""
 
 def convert_div(tag):
@@ -124,6 +126,22 @@ def convert_img(tag):
     
 def convert_a(tag):
     return ""
+
+def convert_pre(tag):
+    # pre-tag -> source code
+    # Confluence uses "brush" for a specified language, e.g. <pre class="brush: bash; gutter: ...
+    
+    # use github-flavored markdown (three backticks): 
+    md = "```"
+    md += linebreak()
+    
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            md += child.string
+    
+    md += linebreak()
+    md += "```"
+    return md
 
 def convert_ul(tag):
     md = ""
