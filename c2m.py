@@ -13,6 +13,7 @@ from bs4 import Tag
 rendering_html = False
 indent = -1
 li_break = False
+li_for_ul_only = False # see convert_li
 
 # linebreaks
 md_br = "\n"
@@ -129,9 +130,12 @@ def convert_ul(tag):
     # insert linebreaks around <ul>, but NOT for nested <ul>. Therefore, linebreak
     # only if indent-level is -1:
     global indent
+    global li_for_ul_only
     #if indent == -1:
-        #md += linebreak()
-    md += linebreak()
+    if not li_for_ul_only:
+        md += linebreak()
+        print("break ul 1")
+    #md += linebreak()
     # increase indention for each list level
     indent += 1
     print("indent " + str(indent))
@@ -143,6 +147,7 @@ def convert_ul(tag):
     indent -= 1
     if indent == -1:
         md += linebreak()
+        print("break ul 2")
     return md
 
 def convert_li(tag):
@@ -152,27 +157,36 @@ def convert_li(tag):
     global li_break
     # reset li_break, see end of function
     li_break = False
+    # true if current <li> exist for purpose of single <ul> only, as in "<li><ul><li>content</li></ul></li>
+    global li_for_ul_only
+    # reset li_for_ul_only, might be True from previous nested list-element
+    li_for_ul_only = False
+    print("li_for_ul_only False")
     
     # check if current <li> exist for purpose of single <ul> only, as in "<li><ul><li>content</li></ul></li>
-    li_for_ul_only = True
-    if len(tag.contents, 1) and tag.contents[0].__class__ == Tag and tag.contents[0].name == "ul":
+    if len(tag.contents)==1 and tag.contents[0].__class__ == Tag and tag.contents[0].name == "ul":
         li_for_ul_only = True
+        print("li_for_ul_only True")
 
-    
     # indent markup depending on level
-    for i in range(0,indent*2):
-        md += " "
-    md += "- "
+    if not li_for_ul_only:
+        for i in range(0,indent*2):
+            md += " "
+        md += "- "
+
+    # traverse children: append strings, delegate tag processing
     for child in tag.children:
         if child.__class__ == NavigableString:
             # a string, just append it
             md += child.string
+            print(child.string)
         elif child.__class__ == Tag:
             md += convert_html_tag(child)
     
-    # Linebreak after <li>. Skip if last chars were li-break too, as in </li></ul></li>.
-    if not li_break:
+    # Linebreak after <li>. Skip if last chars in "md" already were li-break, as in </li></ul></li>.
+    if not li_break and not li_for_ul_only:
         md += linebreak()
+        print("break li")
         li_break = True
 
     return md
