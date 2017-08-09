@@ -129,10 +129,30 @@ def convert_a(tag):
 
 def convert_pre(tag):
     # pre-tag -> source code
+    md = ""
+    md += linebreak()
+
     # Confluence uses "brush" for a specified language, e.g. <pre class="brush: bash; gutter: ...
-    
+    # Note: in bs4, tag-attributes which are expected to be multi-valued (such as 'class'),
+    # will return a list of values EVEN if there are colon-/semicolon values: i.e. 'brush: bash' will
+    # be returned as two values
+    lang = ""
+    class_value_list = tag['class']
+    if class_value_list is not None:
+        for idx, val in enumerate(class_value_list):
+            if val == "brush:":
+                # next value after brush is language. Remove last char via :-1
+                lang = (class_value_list[idx+1])[:-1]
+                break
+
+    # add language-notification via HTML-comment as used on stackoverflow. This is ignored on 
+    # github anyway (just a comment):
+    if lang != "":
+        md += "<!-- language: lang-" + lang + " -->"
+        md += linebreak()
+ 
     # use github-flavored markdown (three backticks): 
-    md = "```"
+    md += "```" + lang
     md += linebreak()
     
     for child in tag.children:
@@ -141,6 +161,7 @@ def convert_pre(tag):
     
     md += linebreak()
     md += "```"
+    md += linebreak()
     return md
 
 def convert_ul(tag):
