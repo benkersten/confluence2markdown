@@ -99,20 +99,27 @@ def convert_table(tag):
     # Col1 | Col2 ...
     # or by just rendering html. As complex tables (e.g. with multi-line-code) does not work
     # with pipe-rendering, just keep the html-table as-is:
+    md = ""
+    md += linebreak()
 
     # set rendering_html, so that other tag-processing works fine. E.g. <br/> will be kept as
     # <br/> instead of being converted to \n
     global rendering_html
     rendering_html = True
-    md = ""
-    md += linebreak()
     # just keep the <html>-table as-is:
-    md = str(tag)
+    md += str(tag)
+    # add linebreaks
+    md = md.replace('<tbody>', '<tbody>\n\n')
+    md = md.replace('<tr>', '<tr>\n')
+    md = md.replace('</th>', '</th>\n')
+    md = md.replace('</td>', '</td>\n')
+    md = md.replace('</tr>', '</tr>\n\n')
     # remove confluence-CSS
     md = md.replace(' class="confluenceTd"', '')
     md = md.replace(' class="confluenceTr"', '')
     md = md.replace(' class="confluenceTh"', '')
     md = md.replace(' class="confluenceTable"', '')
+    md = md.replace(' colspan="1"', '')
     rendering_html = False
 
     # linebreak at end of tag
