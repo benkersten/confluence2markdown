@@ -58,6 +58,10 @@ def convert_html_tag(tag):
         return convert_ul(tag)
     if tag.name == "pre":
         return convert_pre(tag)
+    if tag.name == "b":
+        return convert_b(tag)
+    if tag.name == "i":
+        return convert_i(tag)
     return ""
 
 def convert_div(tag):
@@ -85,9 +89,9 @@ def convert_p(tag):
                 # print("tag-br")
                 md += linebreak()
             else:
-                md += str(tag)
+                md += convert_html_tag(child)
         else:
-            md += str(tag)
+            md += convert_html_tag(child)
     
     # linebreak at end of tag
     md += linebreak()
@@ -132,7 +136,29 @@ def convert_img(tag):
     return ""
     
 def convert_a(tag):
-    return ""
+    
+    # return html as-is
+    if rendering_html:
+        return str(tag)
+
+    # convert to markdown:
+    # first split href-attr and text
+    md = ""
+    href = tag.get("href")
+    text = ""
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            text += child.string
+        # there may be inner tags for anchors. Not only <img>, but e.g. also <b> (bold text) etc:
+        else:
+            text += convert_html_tag(child)
+    
+    # note: always render anchor-links inline. Even though markdown supports link-references (rendering
+    # all links at end of page), github has issues/bugs with local/relative link-references. Whereas 
+    # inline-version of same links does work.
+    return "[" + text + "](" + href + ")"
+
+    return md
 
 def convert_pre(tag):
     # pre-tag -> source code
@@ -228,6 +254,16 @@ def convert_li(tag):
         li_break = True
 
     return md
+
+# <b> bold tag
+def convert_b(tag):
+    # use ** for bold text (markdown also supports __, but ** better distincts from list dash -
+    return "**"
+
+# <i> italic tag
+def convert_i(tag):
+    # use * for italic text (markdown also supports _, but * better distincts from list dash -
+    return "*"
 
 # convert the whole page / html_content. Taverses children and delegates logic per tag.
 def convert_html_page(html_content):
