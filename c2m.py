@@ -62,6 +62,9 @@ def convert_html_tag(tag):
         return convert_b(tag)
     if tag.name == "i":
         return convert_i(tag)
+    if tag.name == "span":
+        # span same as div -> just process children (no linebreaks)
+        return convert_div(tag)
     return ""
 
 def convert_div(tag):
