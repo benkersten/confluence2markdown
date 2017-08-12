@@ -75,6 +75,8 @@ def convert_div(tag):
 
 def convert_p(tag):
     md = ""
+    md += linebreak()
+
     # How to add text in <p>text</p>?
     # - tag.text does not work: returns text of ALL children
     # - tag.string does not work: fails if there are other tags, e.g. as in <p>text<br/>more text</p>
