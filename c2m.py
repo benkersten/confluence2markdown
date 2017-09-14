@@ -71,7 +71,36 @@ def convert_html_tag(tag):
     if tag.name == "span":
         # span same as div -> just process children (no linebreaks)
         return convert_div(tag)
+    if tag.name == "h1" or tag.name == "h2" or tag.name == "h3" or tag.name == "h4":
+        return convert_header(tag)
+        
+    # tag not handled!
+    print("Did NOT handle tag " + tag.name)
     return ""
+
+def convert_header(tag):
+    result = ""
+    result += linebreak()
+    
+    if tag.name == "h1":
+        result += "# "
+    if tag.name == "h2":
+        result += "## "
+    if tag.name == "h3":
+        result += "### "
+    if tag.name == "h4":
+        result += "#### "
+        
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            result += child.string
+        # there may be inner tags for anchors. Not only <img>, but e.g. also <b> (bold text) etc:
+        else:
+            result += convert_html_tag(child)
+    
+    result += linebreak()
+            
+    return result
 
 def convert_div(tag):
     
