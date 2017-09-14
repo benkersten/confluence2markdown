@@ -74,6 +74,26 @@ def convert_html_tag(tag):
     return ""
 
 def convert_div(tag):
+    
+    # ignore Confluence meta-data divs:
+    # try-catch id-attr
+    try:
+        if tag.id == "footer":
+            # ignore "generate by Confluence" etc
+            return ""
+    except:
+        pass
+    # try-catch class-attr
+    try:
+        if tag.get("class") == "page_metadata":
+            # ignore "Created by <user>"
+            return ""
+        if tag.get("class") == "pageSection group":
+            # ignore attachments footer
+            return ""
+    except:
+        pass
+    
     md = ""
     for child in tag.children:
         if child.__class__ == NavigableString:
