@@ -33,8 +33,11 @@ def convert_html_tag(tag):
 
     # info about this tag:
     tag_info = ("convert_html_tag: type="+(str(type(tag))) + ", classname="+tag.__class__.__name__)
-    if tag.name is not None:
-        tag_info += (", name="+tag.name)
+    try:
+         if (not tag.__class__ == NavigableString) and (tag.name is not None):
+            tag_info += (", name="+tag.name)
+    except:
+        pass
     # print(tag_info) 
     
     # check type:
@@ -43,6 +46,9 @@ def convert_html_tag(tag):
     #    print("string==true")
     #if tag.__class__ == NavigableString :
     #    print("string==true")
+    
+    if tag.__class__ == NavigableString:
+        return tag
 
     if tag.name == "div":
         return convert_div(tag)
@@ -138,7 +144,32 @@ def convert_table(tag):
     return md
 
 def convert_img(tag):
-    return ""
+    # render img as html. Why? Cause markdown has no official/working
+    # image-size-support (which i do require for markdown wiki)
+    
+    src = tag.get("src")
+    
+    # Extract src link. 
+    # - if external (http...), then keep.
+    # - if relative, then convert to be relative to <root>/files
+    if not src.startswith("http"):
+        # external would start with http(s), seems to be relative.
+        
+        # ignore Confluence images/icons:
+        # "images/*", e.g. "images/icons/...", are by Confluence => ignore
+        # include others (e.g. "attachments/*")
+        if src.startswith("images"):
+            # ignore complete <img> tag by returning empty string for whole tag:
+            return ""
+        
+        # map to /files:
+        lastSlash = src.rfind("/")
+        newsrc = "/files/" + src[(lastSlash+1):]
+        print("cp " + src + " " + newsrc)
+        src = newsrc
+        
+    img = '<img src="' + src + '"/>'
+    return img
     
 def convert_a(tag):
     
