@@ -383,8 +383,16 @@ def convert_html_page(html_content):
 # a string name, it is just returned.
 def getMarkdownFilename(filename):
     if filename.isdigit():
-       print("Renaming:", filename, " -> ", title)
-       return title
+       titleFilename = title
+       titleFilename.replace(" ", "-")
+       titleFilename.replace("++", "pp")
+       titleFilename.replace("+", "")
+       titleFilename.replace("_", "-")
+       titleFilename.replace("---", "-")
+       titleFilename.replace("--", "-")
+       
+       print("Renaming:", filename, " -> ", titleFilename)
+       return titleFilename
     else:
        return filename
 
