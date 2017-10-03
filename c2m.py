@@ -232,7 +232,8 @@ def convert_a(tag):
     # convert to markdown:
     # first split href-attr and text
     md = ""
-    href = tag.get("href")
+    # default href = # to prevent exception due to None
+    href = tag.get("href","#")
     text = ""
     for child in tag.children:
         if child.__class__ == NavigableString:
@@ -384,14 +385,15 @@ def convert_html_page(html_content):
 def getMarkdownFilename(filename):
     if filename.isdigit():
        titleFilename = title
-       titleFilename.replace(" ", "-")
-       titleFilename.replace("++", "pp")
-       titleFilename.replace("+", "")
-       titleFilename.replace("_", "-")
-       titleFilename.replace("---", "-")
-       titleFilename.replace("--", "-")
+       titleFilename = titleFilename.replace(" ", "-")
+       titleFilename = titleFilename.replace("++", "pp")
+       titleFilename = titleFilename.replace("/", "")
+       titleFilename = titleFilename.replace("+", "")
+       titleFilename = titleFilename.replace("_", "-")
+       titleFilename = titleFilename.replace("---", "-")
+       titleFilename = titleFilename.replace("--", "-")
        
-       print("Renaming:", filename, " -> ", titleFilename)
+       print("Renaming:", filename, " -> ", title, " -> ", titleFilename)
        return titleFilename
     else:
        return filename
