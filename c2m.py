@@ -26,6 +26,9 @@ def linebreak():
     else:
         return md_br
 
+# global vars
+title = "none"
+
 # convert the passed html-tag. Delegates to convert-* functions depending on tag
 def convert_html_tag(tag):
     if tag is None:
@@ -255,7 +258,7 @@ def convert_pre(tag):
     # will return a list of values EVEN if there are colon-/semicolon values: i.e. 'brush: bash' will
     # be returned as two values
     lang = ""
-    class_value_list = tag['class']
+    class_value_list = tag.get('class',None)
     if class_value_list is not None:
         for idx, val in enumerate(class_value_list):
             if val == "brush:":
@@ -358,6 +361,7 @@ def convert_html_page(html_content):
     md = ""
     
     # html-page title: Confluence uses "spacename : pagename". Remove the spacename here
+    global title
     title = soup.title.string 
     position_colon = title.find(" : ")
     if position_colon >= 0 :
@@ -373,6 +377,16 @@ def convert_html_page(html_content):
         md += convert_html_tag(child)
 
     return md
+
+# Confluence sometimes has cryptic filenames, just consisting of digits. In that case, 
+# the parsed title is used instead of the original filename. If filename already has 
+# a string name, it is just returned.
+def getMarkdownFilename(filename):
+    if filename.isdigit():
+       print("Renaming:", filename, " -> ", title)
+       return title
+    else:
+       return filename
 
 # setup program arguments:
 parser = argparse.ArgumentParser()
@@ -411,7 +425,7 @@ for root, dirs, files in os.walk(args.dest):
         markdown_content = convert_html_page(html_content)
 
         # write markdown to .md file
-        markdown_filename = "%s.md" % filename
+        markdown_filename = "%s.md" % getMarkdownFilename(filename)
         markdown_file_path = os.path.join(root, markdown_filename)
         with open(markdown_file_path, 'w') as fout:
             fout.write(markdown_content)
