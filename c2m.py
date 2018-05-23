@@ -14,6 +14,7 @@ rendering_html = False
 indent = -1
 li_break = False
 li_for_ul_only = False # see convert_li
+list_nr = 0
 
 # linebreaks
 md_br = "\n"
@@ -64,7 +65,7 @@ def convert_html_tag(tag):
     if tag.name == "a":
         return convert_a(tag)
     if tag.name == "ul":
-        return convert_ul(tag)
+        return convert_ul_ol(tag, True)
     if tag.name == "pre":
         return convert_pre(tag)
     if tag.name == "b":
@@ -77,7 +78,7 @@ def convert_html_tag(tag):
     if tag.name == "h1" or tag.name == "h2" or tag.name == "h3" or tag.name == "h4":
         return convert_header(tag)
     if tag.name == "ol":
-        return convert_ol(tag)
+        return convert_ul_ol(tag, False)
     if tag.name == "strong":
         return convert_strong(tag)
     if tag.name == "u":
@@ -302,28 +303,32 @@ def convert_pre(tag):
     md += linebreak()
     return md
 
-def convert_ul(tag):
+# convert lists, <ul> or <ol>
+def convert_ul_ol(tag, isUl):
     md = ""
     # insert linebreaks around <ul>, but NOT for nested <ul>. Therefore, linebreak
     # only if indent-level is -1:
     global indent
     global li_for_ul_only
+    global list_nr
     #if indent == -1:
     if not li_for_ul_only:
         md += linebreak()
     # increase indention for each list level
     indent += 1
+    list_nr += 1
     for child in tag.children:
         if child.__class__ == Tag:
             if child.name == "li":
-                md += convert_li(child)
+                md += convert_li(child, isUl)
     # reset indention
     indent -= 1
+    list_nr -= 1
     if indent == -1:
         md += linebreak()
     return md
 
-def convert_li(tag):
+def convert_li(tag, isUl):
     # each <li> is prefixed with a dash
     md = ""
     global indent
@@ -343,7 +348,10 @@ def convert_li(tag):
     if not li_for_ul_only:
         for i in range(0,indent*2):
             md += " "
-        md += "- "
+        if isUl == True
+            md += "- "
+        else
+            md += list_nr + " "
 
     # traverse children: append strings, delegate tag processing
     for child in tag.children:
@@ -369,11 +377,6 @@ def convert_b(tag):
 def convert_i(tag):
     # use * for italic text (markdown also supports _, but * better distincts from list dash -
     return "*"
-
-# <ol> tag
-def convert_ol(tag):
-    # TODO
-    return "" 
 
 # <strong> tag
 def convert_strong(tag):
