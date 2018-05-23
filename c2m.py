@@ -380,13 +380,15 @@ def convert_i(tag):
 
 # <u> tag
 def convert_u(tag):
-    # TODO
-    return "" 
+    # there is no underline in markdown. Emphasize with bold text instead
+    return "**" 
 
 # <br> tag
 def convert_br(tag):
-    # TODO
-    return "" 
+    # single line break can be done with two spaces at end of line
+    md = "  "
+    md += linebreak()
+    return md
 
 # <blockquote> tag
 def convert_blockquote(tag):
@@ -400,13 +402,19 @@ def convert_map(tag):
 
 # <code> tag
 def convert_code(tag):
-    # TODO
-    return "" 
+    md = "" 
+    md += linebreak()
+    md += "```"
+    md += linebreak()
+    return md
 
-# <hr> tag
+# <hr> tag, horizontal line
 def convert_hr(tag):
-    # TODO
-    return "" 
+    # there is no hr equivalent in markdown. Ignore, just add some space
+    md = "" 
+    md += linebreak()
+    md += linebreak()
+    return md
 
 
 # convert the whole page / html_content. Taverses children and delegates logic per tag.
