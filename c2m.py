@@ -76,7 +76,23 @@ def convert_html_tag(tag):
         return convert_div(tag)
     if tag.name == "h1" or tag.name == "h2" or tag.name == "h3" or tag.name == "h4":
         return convert_header(tag)
-        
+    if tag.name == "ol":
+        return convert_ol(tag)
+    if tag.name == "strong":
+        return convert_strong(tag)
+    if tag.name == "u":
+        return convert_u(tag)
+      if tag.name == "em":
+        return convert_em(tag)
+    if tag.name == "blockquote":
+        return convert_blockquote(tag)
+    if tag.name == "map":
+        return convert_map(tag)
+    if tag.name == "code":
+        return convert_code(tag)
+    if tag.name == "hr":
+        return convert_hr(tag)
+    
     # tag not handled!
     print("Did NOT handle tag " + tag.name)
     return ""
@@ -353,6 +369,52 @@ def convert_b(tag):
 def convert_i(tag):
     # use * for italic text (markdown also supports _, but * better distincts from list dash -
     return "*"
+
+# <ol> tag
+def convert_ol(tag):
+    # TODO
+    return "" 
+
+# <strong> tag
+def convert_strong(tag):
+    # TODO
+    return "" 
+
+# <u> tag
+def convert_u(tag):
+    # TODO
+    return "" 
+
+# <br> tag
+def convert_br(tag):
+    # TODO
+    return "" 
+
+# <em> tag
+def convert_em(tag):
+    # TODO
+    return "" 
+
+# <blockquote> tag
+def convert_blockquote(tag):
+    # TODO
+    return "" 
+
+# <map> tag
+def convert_map(tag):
+    # TODO
+    return "" 
+
+# <code> tag
+def convert_code(tag):
+    # TODO
+    return "" 
+
+# <hr> tag
+def convert_hr(tag):
+    # TODO
+    return "" 
+
 
 # convert the whole page / html_content. Taverses children and delegates logic per tag.
 def convert_html_page(html_content):
