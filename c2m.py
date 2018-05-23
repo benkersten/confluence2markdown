@@ -79,12 +79,12 @@ def convert_html_tag(tag):
         return convert_header(tag)
     if tag.name == "ol":
         return convert_ul_ol(tag, False)
-    if tag.name == "strong":
-        return convert_strong(tag)
+    if tag.name == "strong": # use bold for strong
+        return convert_b(tag)
     if tag.name == "u":
         return convert_u(tag)
-      if tag.name == "em":
-        return convert_em(tag)
+      if tag.name == "em": # use italic for em
+        return convert_i(tag)
     if tag.name == "blockquote":
         return convert_blockquote(tag)
     if tag.name == "map":
@@ -378,11 +378,6 @@ def convert_i(tag):
     # use * for italic text (markdown also supports _, but * better distincts from list dash -
     return "*"
 
-# <strong> tag
-def convert_strong(tag):
-    # TODO
-    return "" 
-
 # <u> tag
 def convert_u(tag):
     # TODO
@@ -390,11 +385,6 @@ def convert_u(tag):
 
 # <br> tag
 def convert_br(tag):
-    # TODO
-    return "" 
-
-# <em> tag
-def convert_em(tag):
     # TODO
     return "" 
 
