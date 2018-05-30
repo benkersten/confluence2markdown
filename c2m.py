@@ -335,6 +335,7 @@ def convert_li(tag, isUl):
     md = ""
     global indent
     global li_break
+    global list_nr
     # reset li_break, see end of function
     li_break = False
     # true if current <li> exist for purpose of single <ul> only, as in "<li><ul><li>content</li></ul></li>
@@ -353,7 +354,7 @@ def convert_li(tag, isUl):
         if isUl is True:
             md += "- "
         else:
-            md += list_nr + " "
+            md += str(list_nr) + " "
 
     # traverse children: append strings, delegate tag processing
     for child in tag.children:
