@@ -79,11 +79,13 @@ def convert_html_tag(tag):
         return convert_header(tag)
     if tag.name == "ol":
         return convert_ul_ol(tag, False)
-    if tag.name == "strong": # use bold for strong
+    if tag.name == "strong": 
+        # use bold for strong
         return convert_b(tag)
     if tag.name == "u":
         return convert_u(tag)
-      if tag.name == "em": # use italic for em
+    if tag.name == "em": 
+        # use italic for em
         return convert_i(tag)
     if tag.name == "blockquote":
         return convert_blockquote(tag)
@@ -348,9 +350,9 @@ def convert_li(tag, isUl):
     if not li_for_ul_only:
         for i in range(0,indent*2):
             md += " "
-        if isUl == True
+        if isUl is True:
             md += "- "
-        else
+        else:
             md += list_nr + " "
 
     # traverse children: append strings, delegate tag processing
