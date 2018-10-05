@@ -95,6 +95,8 @@ def convert_html_tag(tag):
         return convert_code(tag)
     if tag.name == "hr":
         return convert_hr(tag)
+    if tag.name == "br":
+        return convert_br(tag)
     
     # tag not handled!
     print("Did NOT handle tag " + tag.name)
@@ -178,6 +180,13 @@ def convert_p(tag):
     # linebreak at end of tag
     md += linebreak()
     
+    return md
+
+def convert_br(tag):
+    md = ""
+    # in most cases, an additional linebreak looks worse than none (would cause
+    # lots of empty lines, e.g. in lists etc). So, just skip <br> and return empty string
+    # md += linebreak()
     return md
 
 def convert_table(tag):
