@@ -374,17 +374,32 @@ def convert_li(tag, isUl):
 # <b> bold tag
 def convert_b(tag):
     # use ** for bold text (markdown also supports __, but ** better distincts from list dash -
-    return "**"
+    md = "**"
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            md += child.string
+    md += "**"
+    return md
 
 # <i> italic tag
 def convert_i(tag):
     # use * for italic text (markdown also supports _, but * better distincts from list dash -
-    return "*"
+    md = "*"
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            md += child.string
+    md += "*"
+    return md
 
 # <u> tag
 def convert_u(tag):
     # there is no underline in markdown. Emphasize with bold text instead
-    return "**" 
+    md = "**"
+    for child in tag.children:
+        if child.__class__ == NavigableString:
+            md += child.string
+    md += "**"
+    return md
 
 # <br> tag
 def convert_br(tag):
