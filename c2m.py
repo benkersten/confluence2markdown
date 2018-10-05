@@ -183,11 +183,11 @@ def convert_p(tag):
     return md
 
 def convert_br(tag):
-    md = ""
+    # md = ""
     # in most cases, an additional linebreak looks worse than none (would cause
     # lots of empty lines, e.g. in lists etc). So, just skip <br> and return empty string
     # md += linebreak()
-    return md
+    return ""
 
 def convert_table(tag):
     # in markdown, tables can be represented with pipes:
@@ -408,13 +408,6 @@ def convert_u(tag):
         if child.__class__ == NavigableString:
             md += child.string
     md += "**"
-    return md
-
-# <br> tag
-def convert_br(tag):
-    # single line break can be done with two spaces at end of line
-    md = "  "
-    md += linebreak()
     return md
 
 # <blockquote> tag
