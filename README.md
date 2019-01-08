@@ -11,7 +11,7 @@ Python3 should be available on most Linux distros. If on Mac, install via brew o
 bs4 is a HtmlParser. Can be installed via package manager on several Linux distros (e.g. `apt-get install python3-bs4`). Otherwise install via pip (e.g. `pip3 install beautifulsoup4`)
 
 # WARN
-This project is a 0.x version NOT working yet, but under development
+This project might not support ALL tags. It worked for me for the most part to convert my confluence wiki to github markdown. So clone it, use it as-is, see the results and maybe make modifications for you own needs.
 
 # Usage
 - Open Confluence, go to space tools (need to be space admin), export, select html format, download the html zip-file, extract it somewhere
@@ -33,6 +33,6 @@ Confluence adds a lot of garbage to any html-page. Not only confluence-specific-
 some code\
 \```
 
-Tables are rendered as-is, i.e. html is kept. Even though tables are often written with pipes in markup, pipe-tables have limitations. E.g. there is no way (i am aware of) to render multi-line-code within tables (in a single cell).
+Tables are rendered as-is, i.e. html is kept. Even though tables are often written with pipes in markup, pipe-tables have limitations. 
 
 
